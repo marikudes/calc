@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter import messagebox as mb
-from operation import calc
+from operation import Calc
 
-class gui():
+class Gui:
     def __init__(self):
-        self.calc = calc()
+        self.calc = Calc()
 
         # настройки окна
         self.root = Tk()
@@ -20,14 +20,16 @@ class gui():
         action_buttons.pack(side=RIGHT)
 
         for symbol in ["+", "-", "/", "//", "*", "="]:
-            self.create_button(action_buttons, symbol, lambda sym=symbol: self.set_action(sym) if sym != "=" else self.equal("regular"))
+            Button(action_buttons, text=symbol, height=3, width=5,
+                command=lambda sym=symbol: self.set_action(sym) if sym != "=" else (self.equal(), self.update())).pack()
 
         # кнопки с доп функционал
         extended_action = Frame(self.root)
         extended_action.pack(side=RIGHT)
 
         for func in ["cos", "sin", "tan"]:
-            Button(extended_action, text=func, height=3, width=5, command=lambda f=func: self.equal(f)).pack()
+            Button(extended_action, text=func, height=3, width=5, 
+                command=lambda f=func: (getattr(self.calc, f)(), self.update())).pack()
 
         # кнопки с числами
         numbers_buttons = Frame(self.root)
@@ -46,10 +48,6 @@ class gui():
         # кнопка очистки
         clear_button = Button(numbers_buttons, text="C", width=5, height=5, command=lambda: self.clear())
         clear_button.grid(row=0, column=3)
-    
-    #функция для создания кнопки
-    def create_button(self, frame, text, command):
-            Button(frame, text=text, height=3, width=5, command=command).pack()
 
     # функции для заполнения мат выражения   
     def set_value(self, x):
@@ -65,22 +63,24 @@ class gui():
             mb.showwarning(title="", message="сначала число")
 
     #функция подсчета
-    def equal(self, x):
+    def equal(self):
         try:
-            self.calc.equal(x)
-            self.result_table.config(text=self.calc.expression) 
+            self.calc.equal()
         except:
-            mb.showwarning(title="", message="нельзя делить на ноль")
+            mb.showwarning(title="", message="Ошибка")
             self.calc.expression = ""
-            self.result_table.config(text="") 
-            
+    
+    def update(self):
+        self.result_table.config(text=self.calc.expression) 
+        
     #функция очистки
     def clear(self):
         self.calc.expression = ""
         self.result_table.config(text="")
 
-    def main(self):
-        self.root.mainloop()
+def main():
+    gui = Gui()
+    gui.root.mainloop()
 
 if __name__ == "__main__":
-    gui().main()
+    main()
