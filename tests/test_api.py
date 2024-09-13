@@ -1,44 +1,43 @@
 import pytest
 from fastapi.testclient import TestClient
-from main import Calculator_API
+from main import app 
 
-#инициализация клиента для тестирования
+# Инициализация клиента для тестирования
 @pytest.fixture
 def client():
-    api = Calculator_API()
-    return TestClient(api.app)
+    return TestClient(app)
 
-#тест главной страницы
+# Тест главной страницы
 def test_mainpage(client):
     response = client.get("/")
     assert response.status_code == 200
     assert b"<!DOCTYPE html>" in response.content
 
-#тест для вычисления выражения
+# Тест для вычисления выражения
 def test_calculate_expression(client):
     response = client.post("/calculate", json={"expression": "2 + 2"})
     assert response.status_code == 200
     assert response.json() == {"result": "4"} 
 
-#тест для вычисления cos
+# Тест для вычисления cos
 def test_cos(client):
     response = client.post("/cos", json={"expression": "0"})
     assert response.status_code == 200
     assert response.json() == {"result": "1.0"}  
 
-#тест для вычисления sin
+# Тест для вычисления sin
 def test_sin(client):
     response = client.post("/sin", json={"expression": "0"})
     assert response.status_code == 200
     assert response.json() == {"result": "0.0"}  
 
-#тест для вычисления tan
+# Тест для вычисления tan
 def test_tan(client):
     response = client.post("/tan", json={"expression": "0"})
     assert response.status_code == 200
     assert response.json() == {"result": "0.0"}  
 
-#тест на обработку ошибок
+# Тест на обработку ошибок
 def test_calculate_expression_error(client):
     response = client.post("/calculate", json={"expression": "invalid"})
     assert response.status_code == 400
