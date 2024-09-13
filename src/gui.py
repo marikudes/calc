@@ -3,9 +3,6 @@ from operation import Calc
 
 class Gui:
     def __init__(self):
-        #инициализация класса для операций
-        self.calc = Calc()
-
         # мат выражение
         self.expression = ""
 
@@ -32,7 +29,7 @@ class Gui:
 
         for func in ["cos", "sin", "tan"]:
             Button(extended_action, text=func, height=3, width=5, 
-                command=lambda f=func: (setattr(self, 'expression', getattr(self.calc, f)(self.expression)), self.update())).pack()
+                command=lambda f=func: (setattr(self, 'expression', getattr(Calc, f)(self.expression)), self.update())).pack()
 
         # кнопки с числами
         numbers_buttons = Frame(self.root)
@@ -68,14 +65,14 @@ class Gui:
     # функция подсчета
     def equal(self):
         try:
-            self.calc.equal(self.expression)
+            Calc.equal(self.expression)
         except Exception:
             mb.showwarning(title="", message="Ошибка")
             self.expression = ""
     
     # функция обновления значения выражения
     def update(self):
-        self.expression = self.calc.equal(self.expression)
+        self.expression = Calc.equal(self.expression)
         self.result_table.config(text=self.expression) 
         
     # функция очистки

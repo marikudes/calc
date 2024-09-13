@@ -5,9 +5,6 @@ from operation import Calc
 from fastapi.templating import Jinja2Templates
 import os
 
-# Инициализация калькулятора и шаблонов
-calc = Calc()
-
 # Настройка шаблонов
 current_dir = os.path.dirname(os.path.abspath(__file__))
 templates_dir = os.path.join(current_dir, "../../templates")
@@ -23,7 +20,7 @@ def mainpage(request: Request):
 @calc_router.post("/calculate")
 async def calculate_expression(expression: Expression):
     try:
-        result = calc.equal(expression.expression)
+        result = Calc.equal(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
@@ -31,7 +28,7 @@ async def calculate_expression(expression: Expression):
 @calc_router.post("/cos")
 async def cos(expression: Expression):
     try:
-        result = calc.cos(expression.expression)
+        result = Calc.cos(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
@@ -39,7 +36,7 @@ async def cos(expression: Expression):
 @calc_router.post("/sin")
 async def sin(expression: Expression):
     try:
-        result = calc.sin(expression.expression)
+        result = Calc.sin(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
@@ -47,7 +44,7 @@ async def sin(expression: Expression):
 @calc_router.post("/tan")
 async def tan(expression: Expression):
     try:
-        result = calc.tan(expression.expression)
+        result = Calc.tan(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
