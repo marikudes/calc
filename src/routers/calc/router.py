@@ -2,20 +2,15 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from schemas import Expression
 from operation import Calc
-from fastapi.templating import Jinja2Templates
-import os
-
-# Настройка шаблонов
-current_dir = os.path.dirname(os.path.abspath(__file__))
-templates_dir = os.path.join(current_dir, "../../templates")
-templates = Jinja2Templates(directory=templates_dir)
 
 # Создание роутера
 calc_router = APIRouter()
 
 @calc_router.get("/")
 def mainpage(request: Request):
-    return templates.TemplateResponse({"request": request}, "index.html")
+    # Использование шаблонов из состояния приложения
+    templates = request.app.state.templates
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @calc_router.post("/calculate")
 async def calculate_expression(expression: Expression):
