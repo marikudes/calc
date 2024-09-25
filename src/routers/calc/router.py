@@ -1,43 +1,49 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import JSONResponse
-from schemas import Expression
-from operation import Calc
+from fastapi.responses import JSONResponse, HTMLResponse
+from .schemas import Expression
+from src.operation import Calc
+from fastapi.templating import Jinja2Templates
 
 # Создание роутера
-calc_router = APIRouter()
+router = APIRouter()
 
-@calc_router.get("/")
-def mainpage(request: Request):
+
+@router.get("/")
+def mainpage(request: Request) -> HTMLResponse:
     # Использование шаблонов из состояния приложения
-    templates = request.app.state.templates
+    templates: Jinja2Templates = request.app.state.templates
     return templates.TemplateResponse("index.html", {"request": request})
 
-@calc_router.post("/calculate")
-async def calculate_expression(expression: Expression):
+
+@router.post("/calculate")
+async def calculate_expression(expression: Expression) -> JSONResponse:
     try:
         result = Calc.equal(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
 
-@calc_router.post("/cos")
-async def cos(expression: Expression):
+
+@router.post("/cos")
+async def cos(expression: Expression) -> JSONResponse:
     try:
         result = Calc.cos(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
 
-@calc_router.post("/sin")
-async def sin(expression: Expression):
+
+@router.post("/sin")
+async def sin(expression: Expression) -> JSONResponse:
     try:
         result = Calc.sin(expression.expression)
         return JSONResponse(content={"result": result})
     except Exception:
         return JSONResponse(content={"result": "Error"}, status_code=400)
 
-@calc_router.post("/tan")
-async def tan(expression: Expression):
+
+@router.post("/tan")
+async def tan(expression: Expression) -> JSONResponse:
     try:
         result = Calc.tan(expression.expression)
         return JSONResponse(content={"result": result})
