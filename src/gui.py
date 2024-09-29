@@ -1,6 +1,10 @@
-from tkinter import Tk, Label, Frame, TOP, RIGHT, LEFT, Button, messagebox as mb
+from collections.abc import Callable
+from tkinter import LEFT, RIGHT, TOP, Button, Frame, Label, Tk
+from tkinter import messagebox as mb
+
+from sympy import SympifyError
+
 from src.operation import Calc
-from typing import Callable
 
 
 class Gui:
@@ -12,7 +16,11 @@ class Gui:
         self.root.geometry("550x700")
 
         self.result_table: Label = Label(
-            text="0", borderwidth=2, relief="solid", width=50, height=10
+            text="0",
+            borderwidth=2,
+            relief="solid",
+            width=50,
+            height=10,
         )
         self.result_table.pack(side=TOP)
 
@@ -66,7 +74,11 @@ class Gui:
             ).grid(row=row, column=col)
 
         clear_button: Button = Button(
-            numbers_buttons, text="C", width=5, height=5, command=self.clear
+            numbers_buttons,
+            text="C",
+            width=5,
+            height=5,
+            command=self.clear,
         )
         clear_button.grid(row=0, column=3)
 
@@ -96,13 +108,15 @@ class Gui:
     def equal(self) -> None:
         try:
             self.expression = str(Calc.equal(self.expression))
-        except Exception:
-            mb.showwarning(title="", message="Ошибка")
+        except ZeroDivisionError:
+            mb.showwarning(title="", message="Деление на ноль")
             self.expression = ""
+        except SympifyError:
+            mb.showwarning(title="", message="Некорректное выражение")
         self.update()
 
     def set_expression(self, func: str) -> None:
-        setattr(self, "expression", getattr(Calc, func)(self.expression))
+        self.expression = getattr(Calc, func)(self.expression)
         self.update()
 
     def update(self) -> None:

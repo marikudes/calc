@@ -1,22 +1,25 @@
 import math
 
+import sympy as sp
+
 
 class Calc:
     @staticmethod
     def equal(expression: str) -> str:
-        result = eval(expression)
-        if isinstance(result, float) and result.is_integer():
-            return str(int(result))
+        result = sp.sympify(expression)
         return str(result)
 
     @staticmethod
     def cos(expression: str) -> str:
-        return str(math.cos(eval(expression)))
+        expr = sp.sympify(expression)
+        return str(math.cos(expr))
 
     @staticmethod
     def sin(expression: str) -> str:
-        return str(math.sin(eval(expression)))
+        expr = sp.sympify(expression)
+        return str(math.sin(expr))
 
     @staticmethod
     def tan(expression: str) -> str:
-        return str(math.tan(eval(expression)))
+        expr = sp.sympify(expression)
+        return str(math.tan(expr))

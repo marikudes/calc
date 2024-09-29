@@ -1,8 +1,10 @@
+from tkinter import Label, Tk
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
-from src.operation import Calc
-from tkinter import Tk, Label
+
 from src.gui import Gui
+from src.operation import Calc
 
 
 @pytest.fixture
@@ -42,7 +44,7 @@ def test_clear(gui: Gui) -> None:
     gui.set_value(5)
     gui.clear()
     assert gui.expression == ""
-    assert gui.result_table.cget("text") == ""
+    assert gui.result_table.cget("text") == "0"
 
 
 @patch.object(Calc, "equal", return_value="8")
@@ -51,4 +53,6 @@ def test_update(mock_calc: Mock, gui: Gui) -> None:
     gui.set_action("+")
     gui.set_value(3)
     gui.update()
-    assert gui.result_table.cget("text") == "8"
+    assert gui.result_table.cget("text") == "5+3"
+    gui.equal()
+    mock_calc.assert_called_once()

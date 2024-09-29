@@ -1,31 +1,43 @@
+import logging
+from collections.abc import AsyncGenerator
+from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Any, TypedDict
+
+import httpx
 from fastapi import FastAPI
-from src.routers import calc_router
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import os
-from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Dict, Any
+
+from src.routers import calc_router
+
+
+class State(TypedDict):
+    http_client: httpx.AsyncClient
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[Dict[str, Any], None]:
+async def lifespan(app: FastAPI) -> AsyncGenerator[dict[str, Any], None]:
     # настройка статических файлов
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    static_dir = os.path.join(current_dir, "static")
+    base_dir = Path(__file__).parent.parent
+    static_dir = base_dir.joinpath("src", "static").resolve()
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
     # настройка шаблонов
-    templates_dir = os.path.join(current_dir, "templates")
+    templates_dir = base_dir.joinpath("src", "templates").resolve()
     app.state.templates = Jinja2Templates(
-        directory=templates_dir
+        directory=templates_dir,
     )  # Сохранение в состояние приложения
 
     # подключение роутера
     app.include_router(calc_router, prefix="")
 
-    print("start")
-    yield {"state": app.state}
-    print("end")
+    logging.debug("start")
+
+    async with httpx.AsyncClient() as client:
+        yield {"http_client": client}
+
+    logging.debug("stop")
 
 
 # инициализация приложения
