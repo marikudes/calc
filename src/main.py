@@ -2,18 +2,13 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any
 
-import httpx
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from src.routers import calc_router
-
-
-class State(TypedDict):
-    http_client: httpx.AsyncClient
 
 
 @asynccontextmanager
@@ -34,8 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict[str, Any], None]:
 
     logging.debug("start")
 
-    async with httpx.AsyncClient() as client:
-        yield {"http_client": client}
+    yield {"jinja": Jinja2Templates(directory=templates_dir)}
 
     logging.debug("stop")
 
