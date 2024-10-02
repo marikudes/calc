@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
-if TYPE_CHECKING:
-    from fastapi.templating import Jinja2Templates
-
 from src.operation import Calc
 
 from .schemas import Expression
+
+if TYPE_CHECKING:
+    from fastapi.templating import Jinja2Templates
 
 # Создание роутера
 router = APIRouter()
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.get("/")
 def mainpage(request: Request) -> HTMLResponse:
     # Использование шаблонов из состояния приложения
-    templates: Jinja2Templates = request.app.state.templates
+    templates: Jinja2Templates = request.state.jinja
     return templates.TemplateResponse("index.html", {"request": request})
 
 

@@ -20,9 +20,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict[str, Any], None]:
 
     # настройка шаблонов
     templates_dir = base_dir.joinpath("src", "templates").resolve()
-    app.state.templates = Jinja2Templates(
-        directory=templates_dir,
-    )  # Сохранение в состояние приложения
 
     # подключение роутера
     app.include_router(calc_router, prefix="")
